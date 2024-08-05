@@ -4,7 +4,9 @@ import { sayHello } from "../functions/say-hello/resource";
 const schema = a.schema({
   Todo: a.model({
     content: a.string(),
-  }).authorization((allow) => [allow.publicApiKey()]),
+  }).authorization((allow) => [
+    allow.authenticated("userPools").to(["read"]),
+  ]),
 }).authorization(allow => [allow.resource(sayHello)]);
 
 export type Schema = ClientSchema<typeof schema>;
@@ -12,9 +14,6 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "apiKey",
-    apiKeyAuthorizationMode: {
-      expiresInDays: 30,
-    },
+    defaultAuthorizationMode: "userPool",
   },
 });
